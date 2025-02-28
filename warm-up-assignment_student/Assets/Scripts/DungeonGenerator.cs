@@ -13,9 +13,9 @@ public class DungeonGenerator : MonoBehaviour
     void Start()
     {
         rooms.Add(startSquare);
-        SplitRoomHorizontal(rooms[0]);
-        SplitRoomVertical(rooms[1]);
-        SplitRoomVertical(rooms[2]);
+        SplitRoom(rooms[0]);
+        SplitRoom(rooms[1]);
+        SplitRoom(rooms[2]);
 
         for (int i = 0; i < rooms.Count; i++)
         {
@@ -36,7 +36,18 @@ public class DungeonGenerator : MonoBehaviour
         }
         
     }
-    
+    void SplitRoom(RectInt roomToSplit)
+    {
+        if (Random.Range(0, 2) == 0)
+        {
+            SplitRoomHorizontal(roomToSplit);
+        }
+        else
+        {
+            SplitRoomVertical(roomToSplit);
+        }
+    }
+
     void SplitRoomHorizontal(RectInt roomToSplit)
     {
 
