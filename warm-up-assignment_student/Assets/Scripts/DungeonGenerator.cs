@@ -12,10 +12,22 @@ public class DungeonGenerator : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        
         rooms.Add(startSquare);
-        SplitRoom(rooms[0]);
-        SplitRoom(rooms[1]);
-        SplitRoom(rooms[2]);
+        //SplitRoom(rooms[0]);
+        //SplitRoom(rooms[1]);
+        //SplitRoom(rooms[2]);
+        //SplitRoom(rooms[3]);
+        //SplitRoom(rooms[4]);
+        //SplitRoom(rooms[5]);
+        //SplitRoom(rooms[6]);
+        //SplitRoom(rooms[7]);
+        //SplitRoom(rooms[8]);
+        //SplitRoom(rooms[9]);
+        for (int i = 0; i < 1000; i++)
+        {
+            SplitRoom(rooms[i]);
+        }
 
         for (int i = 0; i < rooms.Count; i++)
         {
@@ -28,10 +40,11 @@ public class DungeonGenerator : MonoBehaviour
     {
         for (int i = 0; i < rooms.Count; i++)
         {
-            AlgorithmsUtils.DebugRectInt(rooms[i], colors[i],0,false,i*10);
+            AlgorithmsUtils.DebugRectInt(rooms[i], colors[i]);
+            //AlgorithmsUtils.DebugRectInt(rooms[i], colors[i], 0, false, i * 10);
+
+
             //RectInt smaller = new RectInt(rooms[i].position.x + 1, rooms[i].position.y + 1, rooms[i].size.x - 2, rooms[i].size.y - 2);
-
-
             //AlgorithmsUtils.DebugRectInt(smaller, colors[i],0,false,i * 10);
         }
         
@@ -65,6 +78,7 @@ public class DungeonGenerator : MonoBehaviour
         RectInt split2 = new RectInt(newPos, newSize2);
         rooms.Add(split1);
         rooms.Add(split2);
+
     }
     void SplitRoomVertical(RectInt roomToSplit)
     {
