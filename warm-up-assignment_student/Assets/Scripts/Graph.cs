@@ -37,7 +37,6 @@ public class Graph<T>
     public void PrintGraph()
     {
         List<T> nodes = adjacencyList.Keys.ToList();
-        List<T> ToPrint = new List<T>();
         string toPrint = "";
 
         for (int i = 0; i < adjacencyList.Count; i++)
