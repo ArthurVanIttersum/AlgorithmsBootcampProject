@@ -24,9 +24,13 @@ public class DungeonGenerator : MonoBehaviour
         //SplitRoom(rooms[7]);
         //SplitRoom(rooms[8]);
         //SplitRoom(rooms[9]);
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 100000; i++)
         {
-            SplitRoom(rooms[i]);
+            if (rooms.Count > i)
+            {
+                SplitRoom(rooms[i]);
+            }
+            
         }
 
         for (int i = 0; i < rooms.Count; i++)
@@ -40,7 +44,8 @@ public class DungeonGenerator : MonoBehaviour
     {
         for (int i = 0; i < rooms.Count; i++)
         {
-            AlgorithmsUtils.DebugRectInt(rooms[i], colors[i]);
+            RectInt withwalls = new RectInt(rooms[i].position, new Vector2Int(rooms[i].size.x + 1, rooms[i].size.y + 1));
+            AlgorithmsUtils.DebugRectInt(withwalls, colors[i]);
             //AlgorithmsUtils.DebugRectInt(rooms[i], colors[i], 0, false, i * 10);
 
 
@@ -51,22 +56,29 @@ public class DungeonGenerator : MonoBehaviour
     }
     void SplitRoom(RectInt roomToSplit)
     {
+
         if (Random.Range(0, 2) == 0)
         {
-            SplitRoomHorizontal(roomToSplit);
+            if (!SplitRoomHorizontal(roomToSplit))
+            {
+                SplitRoomVertical(roomToSplit);
+            }
         }
         else
         {
-            SplitRoomVertical(roomToSplit);
+            if (!SplitRoomVertical(roomToSplit))
+            {
+                SplitRoomHorizontal(roomToSplit);
+            }
         }
     }
 
-    void SplitRoomHorizontal(RectInt roomToSplit)
+    bool SplitRoomHorizontal(RectInt roomToSplit)
     {
 
         if (roomToSplit.width < 10)
         {
-            return;
+            return false;
         }
         int splitDistance = Random.Range(3, roomToSplit.width - 3);
 
@@ -78,13 +90,13 @@ public class DungeonGenerator : MonoBehaviour
         RectInt split2 = new RectInt(newPos, newSize2);
         rooms.Add(split1);
         rooms.Add(split2);
-
+        return true;
     }
-    void SplitRoomVertical(RectInt roomToSplit)
+    bool SplitRoomVertical(RectInt roomToSplit)
     {
         if (roomToSplit.height < 10)
         {
-            return;
+            return false;
         }
         int splitDistance = Random.Range(3, roomToSplit.height - 3);
 
@@ -96,5 +108,6 @@ public class DungeonGenerator : MonoBehaviour
         RectInt split2 = new RectInt(newPos, newSize2);
         rooms.Add(split1);
         rooms.Add(split2);
+        return true;
     }
 }
