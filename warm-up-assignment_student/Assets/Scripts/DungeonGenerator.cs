@@ -11,6 +11,7 @@ public class DungeonGenerator : MonoBehaviour
     public List<RectInt> rooms = new List<RectInt>();
     public List<Color> colors = new List<Color>();
     public float cooldown;
+    int completedRooms = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     IEnumerator Start()
@@ -20,18 +21,24 @@ public class DungeonGenerator : MonoBehaviour
         colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
         for (int i = 0; i < steps; i++)
         {
-            if (rooms.Count <= i)
+            if (rooms.Count <= completedRooms)
             {
                 break;
             }
-            if (SplitRoom(rooms[i]))
+            if (SplitRoom(rooms[completedRooms]))
             {
                 colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
                 colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
+                colors.Remove(colors[completedRooms]);
                 yield return new WaitForSeconds(cooldown);
+            }
+            else
+            {
+                completedRooms++;
             }
         }
         yield return new WaitForSeconds(cooldown);
+        print("done");
     }
 
     // Update is called once per frame
@@ -51,7 +58,6 @@ public class DungeonGenerator : MonoBehaviour
     }
     bool SplitRoom(RectInt roomToSplit)
     {
-
         if (Random.Range(0, 2) == 0)
         {
             if (!SplitRoomHorizontal(roomToSplit))
@@ -87,6 +93,7 @@ public class DungeonGenerator : MonoBehaviour
 
         rooms.Add(splitroom1);
         rooms.Add(splitroom2);
+        rooms.Remove(roomToSplit);
         return true;
     }
     bool SplitRoomVertical(RectInt roomToSplit)
@@ -106,6 +113,7 @@ public class DungeonGenerator : MonoBehaviour
 
         rooms.Add(splitroom1);
         rooms.Add(splitroom2);
+        rooms.Remove(roomToSplit);
 
         return true;
     }
