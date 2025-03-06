@@ -413,6 +413,7 @@ MonoBehaviour:
     height: 1000
   rooms: []
   colors: []
+  cooldown: 0.1
 --- !u!4 &774873143
 Transform:
   m_ObjectHideFlags: 0

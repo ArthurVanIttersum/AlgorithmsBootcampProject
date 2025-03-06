@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class DungeonGenerator : MonoBehaviour
@@ -7,35 +9,30 @@ public class DungeonGenerator : MonoBehaviour
     
     public List<RectInt> rooms = new List<RectInt>();
     public List<Color> colors = new List<Color>();
-
+    public float cooldown;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    IEnumerator Start()
     {
         
         rooms.Add(startSquare);
-        //SplitRoom(rooms[0]);
-        //SplitRoom(rooms[1]);
-        //SplitRoom(rooms[2]);
-        //SplitRoom(rooms[3]);
-        //SplitRoom(rooms[4]);
-        //SplitRoom(rooms[5]);
-        //SplitRoom(rooms[6]);
-        //SplitRoom(rooms[7]);
-        //SplitRoom(rooms[8]);
-        //SplitRoom(rooms[9]);
+        colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
         for (int i = 0; i < 100000; i++)
         {
             if (rooms.Count > i)
             {
-                SplitRoom(rooms[i]);
+                if (SplitRoom(rooms[i]))
+                {
+                    colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
+                    colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
+                    yield return new WaitForSeconds(cooldown);
+                }
+                
             }
-            
-        }
-
-        for (int i = 0; i < rooms.Count; i++)
-        {
-            colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
+            else
+            {
+                break;
+            }
         }
     }
 
@@ -54,22 +51,24 @@ public class DungeonGenerator : MonoBehaviour
         }
         
     }
-    void SplitRoom(RectInt roomToSplit)
+    bool SplitRoom(RectInt roomToSplit)
     {
 
         if (Random.Range(0, 2) == 0)
         {
             if (!SplitRoomHorizontal(roomToSplit))
             {
-                SplitRoomVertical(roomToSplit);
+                return SplitRoomVertical(roomToSplit);
             }
+            return true;
         }
         else
         {
             if (!SplitRoomVertical(roomToSplit))
             {
-                SplitRoomHorizontal(roomToSplit);
+                return SplitRoomHorizontal(roomToSplit);
             }
+            return true;
         }
     }
 
