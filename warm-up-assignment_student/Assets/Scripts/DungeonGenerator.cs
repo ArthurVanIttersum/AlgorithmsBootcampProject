@@ -6,6 +6,7 @@ using UnityEngine;
 public class DungeonGenerator : MonoBehaviour
 {
     public RectInt startSquare = new RectInt(10, 0, 100, 100);
+    public int steps;
     
     public List<RectInt> rooms = new List<RectInt>();
     public List<Color> colors = new List<Color>();
@@ -17,7 +18,7 @@ public class DungeonGenerator : MonoBehaviour
         
         rooms.Add(startSquare);
         colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
-        for (int i = 0; i < 100000; i++)
+        for (int i = 0; i < steps; i++)
         {
             if (rooms.Count > i)
             {
@@ -25,7 +26,7 @@ public class DungeonGenerator : MonoBehaviour
                 {
                     colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
                     colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
-                    yield return new WaitForSeconds(cooldown);
+                    //yield return new WaitForSeconds(cooldown);
                 }
                 
             }
@@ -34,6 +35,7 @@ public class DungeonGenerator : MonoBehaviour
                 break;
             }
         }
+        yield return new WaitForSeconds(cooldown);
     }
 
     // Update is called once per frame
