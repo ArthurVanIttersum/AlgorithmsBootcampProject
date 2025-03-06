@@ -20,19 +20,15 @@ public class DungeonGenerator : MonoBehaviour
         colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
         for (int i = 0; i < steps; i++)
         {
-            if (rooms.Count > i)
-            {
-                if (SplitRoom(rooms[i]))
-                {
-                    colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
-                    colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
-                    //yield return new WaitForSeconds(cooldown);
-                }
-                
-            }
-            else
+            if (rooms.Count <= i)
             {
                 break;
+            }
+            if (SplitRoom(rooms[i]))
+            {
+                colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
+                colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
+                yield return new WaitForSeconds(cooldown);
             }
         }
         yield return new WaitForSeconds(cooldown);
@@ -43,8 +39,8 @@ public class DungeonGenerator : MonoBehaviour
     {
         for (int i = 0; i < rooms.Count; i++)
         {
-            RectInt withwalls = new RectInt(rooms[i].position, new Vector2Int(rooms[i].size.x + 1, rooms[i].size.y + 1));
-            AlgorithmsUtils.DebugRectInt(withwalls, colors[i]);
+            //RectInt withwalls = new RectInt(rooms[i].position, new Vector2Int(rooms[i].size.x + 1, rooms[i].size.y + 1));
+            AlgorithmsUtils.DebugRectInt(rooms[i], colors[i]);
             //AlgorithmsUtils.DebugRectInt(rooms[i], colors[i], 0, false, i * 10);
 
 
@@ -83,14 +79,14 @@ public class DungeonGenerator : MonoBehaviour
         }
         int splitDistance = Random.Range(3, roomToSplit.width - 3);
 
+        Vector2Int splitTop = new Vector2Int(roomToSplit.xMin + splitDistance, roomToSplit.yMax);
+        Vector2Int splitBottom = new Vector2Int(roomToSplit.xMin + splitDistance, roomToSplit.yMin);
 
-        Vector2Int newSize1 = new Vector2Int(splitDistance, roomToSplit.size.y);
-        Vector2Int newSize2 = new Vector2Int(roomToSplit.size.x - splitDistance, roomToSplit.size.y);
-        Vector2Int newPos  = new Vector2Int(splitDistance + roomToSplit.position.x, roomToSplit.position.y);
-        RectInt split1 = new RectInt(roomToSplit.position, newSize1);
-        RectInt split2 = new RectInt(newPos, newSize2);
-        rooms.Add(split1);
-        rooms.Add(split2);
+        RectInt splitroom1 = TwoPosToRectInt(roomToSplit.min, splitTop);
+        RectInt splitroom2 = TwoPosToRectInt(splitBottom, roomToSplit.max);
+
+        rooms.Add(splitroom1);
+        rooms.Add(splitroom2);
         return true;
     }
     bool SplitRoomVertical(RectInt roomToSplit)
@@ -102,13 +98,22 @@ public class DungeonGenerator : MonoBehaviour
         int splitDistance = Random.Range(3, roomToSplit.height - 3);
 
 
-        Vector2Int newSize1 = new Vector2Int(roomToSplit.size.x, splitDistance);
-        Vector2Int newSize2 = new Vector2Int(roomToSplit.size.x, roomToSplit.size.y - splitDistance);
-        Vector2Int newPos = new Vector2Int(roomToSplit.position.x, splitDistance + roomToSplit.position.y);
-        RectInt split1 = new RectInt(roomToSplit.position, newSize1);
-        RectInt split2 = new RectInt(newPos, newSize2);
-        rooms.Add(split1);
-        rooms.Add(split2);
+        Vector2Int splitRight = new Vector2Int(roomToSplit.xMax, roomToSplit.yMin + splitDistance);
+        Vector2Int splitLeft = new Vector2Int(roomToSplit.xMin, roomToSplit.yMin + splitDistance);
+
+        RectInt splitroom1 = TwoPosToRectInt(roomToSplit.min, splitRight);
+        RectInt splitroom2 = TwoPosToRectInt(splitLeft, roomToSplit.max);
+
+        rooms.Add(splitroom1);
+        rooms.Add(splitroom2);
+
         return true;
+    }
+
+    RectInt TwoPosToRectInt(Vector2Int low, Vector2Int high)
+    {
+        RectInt newRoom = new RectInt();
+        newRoom.SetMinMax(low, high);
+        return newRoom;
     }
 }
