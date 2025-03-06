@@ -79,7 +79,7 @@ public class DungeonGenerator : MonoBehaviour
         }
         int splitDistance = Random.Range(3, roomToSplit.width - 3);
 
-        Vector2Int splitTop = new Vector2Int(roomToSplit.xMin + splitDistance, roomToSplit.yMax);
+        Vector2Int splitTop = new Vector2Int(roomToSplit.xMin + splitDistance + 1, roomToSplit.yMax);
         Vector2Int splitBottom = new Vector2Int(roomToSplit.xMin + splitDistance, roomToSplit.yMin);
 
         RectInt splitroom1 = TwoPosToRectInt(roomToSplit.min, splitTop);
@@ -98,7 +98,7 @@ public class DungeonGenerator : MonoBehaviour
         int splitDistance = Random.Range(3, roomToSplit.height - 3);
 
 
-        Vector2Int splitRight = new Vector2Int(roomToSplit.xMax, roomToSplit.yMin + splitDistance);
+        Vector2Int splitRight = new Vector2Int(roomToSplit.xMax, roomToSplit.yMin + splitDistance + 1);
         Vector2Int splitLeft = new Vector2Int(roomToSplit.xMin, roomToSplit.yMin + splitDistance);
 
         RectInt splitroom1 = TwoPosToRectInt(roomToSplit.min, splitRight);
