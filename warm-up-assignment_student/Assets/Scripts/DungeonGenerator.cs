@@ -10,8 +10,13 @@ public class DungeonGenerator : MonoBehaviour
     
     public List<RectInt> rooms = new List<RectInt>();
     public List<Color> colors = new List<Color>();
+    public List<RectInt> doors = new List<RectInt>();
+    
+    
     public float cooldown;
     int completedRooms = 0;
+
+    //Graph<RectInt> graph = new Graph<RectInt>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     IEnumerator Start()
@@ -39,6 +44,28 @@ public class DungeonGenerator : MonoBehaviour
         }
         yield return new WaitForSeconds(cooldown);
         print("done");
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            for (int j = i; j < rooms.Count; j++)
+            {
+                if (i != j)
+                {
+                    if (AlgorithmsUtils.Intersects(rooms[i], rooms[j]))
+                    {
+                        RectInt intersectArea = AlgorithmsUtils.Intersect(rooms[i], rooms[j]);
+                        if (intersectArea.width * intersectArea.height > 2)
+                        {
+                            
+                            MakeDoor(intersectArea);
+                        }
+
+                    }
+                }
+            }
+            
+                
+        }
+
     }
 
     // Update is called once per frame
@@ -55,6 +82,10 @@ public class DungeonGenerator : MonoBehaviour
             //AlgorithmsUtils.DebugRectInt(smaller, colors[i],0,false,i * 10);
         }
         
+        for (int i = 0; i < doors.Count; i++)
+        {
+            AlgorithmsUtils.DebugRectInt(doors[i], Color.red);
+        }
     }
     bool SplitRoom(RectInt roomToSplit)
     {
@@ -123,5 +154,23 @@ public class DungeonGenerator : MonoBehaviour
         RectInt newRoom = new RectInt();
         newRoom.SetMinMax(low, high);
         return newRoom;
+    }
+
+    private void MakeDoor(RectInt intersectArea)
+    {
+        RectInt doorArea;
+        if (intersectArea.width == 1)
+        {
+            int doorPosition = Random.Range(1, intersectArea.height - 2);
+            doorArea = new RectInt(new Vector2Int(intersectArea.xMin, intersectArea.yMin + doorPosition) , new Vector2Int(1,1));
+            doors.Add(doorArea);
+        }
+        else
+        {
+            int doorPosition = Random.Range(1, intersectArea.width - 2);
+            doorArea = new RectInt(new Vector2Int(intersectArea.xMin + doorPosition, intersectArea.yMin), new Vector2Int(1, 1));
+            doors.Add(doorArea);
+        }
+        
     }
 }
