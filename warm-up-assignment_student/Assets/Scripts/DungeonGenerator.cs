@@ -15,8 +15,9 @@ public class DungeonGenerator : MonoBehaviour
     
     public float cooldown;
     int completedRooms = 0;
+    public bool displayDictionary;
 
-    //Graph<RectInt> graph = new Graph<RectInt>();
+    Graph<RectInt> graph = new Graph<RectInt>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     IEnumerator Start()
@@ -43,7 +44,7 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
         yield return new WaitForSeconds(cooldown);
-        print("done");
+        print("rooms done");
         for (int i = 0; i < rooms.Count; i++)
         {
             for (int j = i; j < rooms.Count; j++)
@@ -55,17 +56,35 @@ public class DungeonGenerator : MonoBehaviour
                         RectInt intersectArea = AlgorithmsUtils.Intersect(rooms[i], rooms[j]);
                         if (intersectArea.width * intersectArea.height > 2)
                         {
-                            
                             MakeDoor(intersectArea);
                         }
 
                     }
                 }
-            }
-            
-                
+            } 
         }
-
+        yield return new WaitForSeconds(cooldown);
+        print("doors done");
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            graph.AddNode(rooms[i]);
+        }
+        for (int i = 0; i < doors.Count; i++)
+        {
+            graph.AddNode(doors[i]);
+        }
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            for (int j = 0; j < doors.Count; j++)
+            {
+                if (AlgorithmsUtils.Intersects(rooms[i], doors[j]))
+                {
+                    graph.AddEdge(rooms[i], doors[j]);
+                }
+            }
+        }
+        Debug.Log("Graph Structure:");
+        graph.PrintGraph();
     }
 
     // Update is called once per frame
@@ -85,6 +104,20 @@ public class DungeonGenerator : MonoBehaviour
         for (int i = 0; i < doors.Count; i++)
         {
             AlgorithmsUtils.DebugRectInt(doors[i], Color.red);
+        }
+
+        if (displayDictionary)
+        {
+            for (int i = 0; i < rooms.Count; i++)
+            {
+                List<RectInt> neighbors = graph.GetNeighbors(rooms[i]);
+                for (int j = 0; j < neighbors.Count; j++)
+                {
+                    Vector3 arrowStart = new Vector3(rooms[i].center.x, 0, rooms[i].center.y);
+                    Vector3 arrowEnd = new Vector3(neighbors[j].center.x, 0, neighbors[j].center.y) - arrowStart;
+                    DebugExtension.DebugArrow(arrowStart, arrowEnd, Color.magenta);
+                }
+            }
         }
     }
     bool SplitRoom(RectInt roomToSplit)
@@ -173,4 +206,6 @@ public class DungeonGenerator : MonoBehaviour
         }
         
     }
+
+
 }
