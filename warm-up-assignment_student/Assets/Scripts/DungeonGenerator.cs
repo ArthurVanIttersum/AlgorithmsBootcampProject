@@ -85,6 +85,11 @@ public class DungeonGenerator : MonoBehaviour
         }
         Debug.Log("Graph Structure:");
         graph.PrintGraph();
+        if (graph.BFS(rooms[0]) == rooms.Count + doors.Count)
+        {
+            Debug.Log("all rooms are reachable");
+        }
+        
     }
 
     // Update is called once per frame

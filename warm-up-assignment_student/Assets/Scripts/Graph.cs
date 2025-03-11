@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class Graph<T>
@@ -57,5 +58,57 @@ public class Graph<T>
         
         
         
+    }
+
+
+    public int BFS(T startNode)
+    {
+        T currentNode = startNode;
+        List<T> fifo = new List<T>();
+        List<T> discovered = new List<T>();
+        fifo.Add(currentNode);
+        discovered.Add(currentNode);
+        while (fifo.Count != 0)
+        {
+            Debug.Log(currentNode.ToString());
+            currentNode = fifo.First();
+            fifo.Remove(currentNode);
+            List<T> allNeighbors = GetNeighbors(currentNode);
+            for (int i = 0; i < allNeighbors.Count; i++)
+            {
+                if (!discovered.Contains(allNeighbors[i]))
+                {
+                    fifo.Add(allNeighbors[i]);
+                    discovered.Add(allNeighbors[i]);
+                }
+            }
+        }
+        return discovered.Count;
+    }
+
+    public int DFS(T startNode)
+    {
+        T currentNode = startNode;
+        List<T> fifo = new List<T>();
+        List<T> discovered = new List<T>();
+        fifo.Add(currentNode);
+        discovered.Add(currentNode);
+        while (fifo.Count != 0)
+        {
+            Debug.Log(currentNode.ToString());
+            currentNode = fifo.Last();
+            fifo.Remove(currentNode);
+            List<T> allNeighbors = GetNeighbors(currentNode);
+            for (int i = 0; i < allNeighbors.Count; i++)
+            {
+                if (!discovered.Contains(allNeighbors[i]))
+                {
+                    fifo.Add(allNeighbors[i]);
+                    discovered.Add(allNeighbors[i]);
+
+                }
+            }
+        }
+        return discovered.Count;
     }
 }
