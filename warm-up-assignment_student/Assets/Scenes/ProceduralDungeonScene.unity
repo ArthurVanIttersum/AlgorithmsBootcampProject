@@ -459,8 +459,7 @@ MonoBehaviour:
   rooms: []
   colors: []
   doors: []
-  cooldown: 0.5
-  displayDictionary: 0
+  cooldown: 0.2
 --- !u!4 &774873143
 Transform:
   m_ObjectHideFlags: 0
