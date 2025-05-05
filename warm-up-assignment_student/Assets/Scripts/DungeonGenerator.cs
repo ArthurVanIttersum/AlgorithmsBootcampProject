@@ -18,7 +18,7 @@ public class DungeonGenerator : MonoBehaviour
     
 
     Graph<RectInt> graph = new Graph<RectInt>();
-
+    public DungeonAssetPlacer assetPlacer;
     
     IEnumerator Start()
     {
@@ -54,6 +54,8 @@ public class DungeonGenerator : MonoBehaviour
         print(graph.BFS(rooms[0]));
         print("NumberOfRooms + NumberOfDoors - NumberofNodes:");
         print(rooms.Count + doors.Count - graph.BFS(rooms[0]));
+        yield return new WaitForSeconds(cooldown);
+        assetPlacer.PlaceAssets();
     }
 
     void Update()

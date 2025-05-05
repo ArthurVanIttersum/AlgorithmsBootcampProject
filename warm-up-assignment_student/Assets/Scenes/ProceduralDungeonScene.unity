@@ -461,6 +461,7 @@ MonoBehaviour:
   colors: []
   doors: []
   cooldown: 0.2
+  assetPlacer: {fileID: 774873144}
 --- !u!4 &774873143
 Transform:
   m_ObjectHideFlags: 0
@@ -488,6 +489,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c9b277bd4a984e4b8eed8197808e56c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wallPrefab: {fileID: 1797307701630184570, guid: fd2cca0f6d4efd24fb89f93f41c32a3e, type: 3}
+  EmptyGameObjectPrefab: {fileID: 5327127733904519860, guid: de3f3f612fd075744882243b258ce3f1, type: 3}
+  floorPrefab: {fileID: 7827584458274142897, guid: 347a2e996108a6d4788e01044d6afc35, type: 3}
+  dungeonGenerator: {fileID: 774873142}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
