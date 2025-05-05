@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
 using Unity.AI.Navigation;
-using UnityEditor;
 using UnityEngine;
 
 public class DungeonAssetPlacer : MonoBehaviour
@@ -10,15 +8,20 @@ public class DungeonAssetPlacer : MonoBehaviour
     public GameObject EmptyGameObjectPrefab;
     public GameObject floorPrefab;
     public DungeonGenerator dungeonGenerator;
-    public HashSet<Vector2> wallPositions = new HashSet<Vector2>();
     public NavMeshSurface navMeshSurface;
+    private HashSet<Vector2> wallPositions = new HashSet<Vector2>();
     private Vector3 wallOffset = new Vector3(0.5f, 0.5f, 0.5f);
     private Vector3 floorOffset = new Vector3(0.5f, 0, 0.5f);
     private Vector2 gridspacePosition;
     private Vector3 worldSpacePosition;
     public void PlaceAssets()
     {
-        //walls
+        PlaceWalls();
+        PlaceFloor();
+    }
+
+    private void PlaceWalls()
+    {
         GameObject wallParrent = Instantiate(EmptyGameObjectPrefab, Vector3.zero, Quaternion.identity);
 
         for (int i = 0; i < dungeonGenerator.rooms.Count; i++)
@@ -39,15 +42,17 @@ public class DungeonAssetPlacer : MonoBehaviour
         {
             wallPositions.Remove(dungeonGenerator.doors[i].position);
         }
-        
-        foreach (var item in wallPositions)
+
+        foreach (Vector2 position in wallPositions)
         {
-            gridspacePosition = item;
+            gridspacePosition = position;
             worldSpacePosition = new Vector3(gridspacePosition.x, 0, gridspacePosition.y) + wallOffset;
             Instantiate(wallPrefab, worldSpacePosition, Quaternion.identity, wallParrent.transform);
         }
+    }
 
-        //floor
+    private void PlaceFloor()
+    {
         GameObject floorParrent = Instantiate(EmptyGameObjectPrefab, Vector3.zero, Quaternion.identity);
 
         for (int i = 0; i < dungeonGenerator.rooms.Count; i++)
@@ -69,8 +74,9 @@ public class DungeonAssetPlacer : MonoBehaviour
             worldSpacePosition = new Vector3(gridspacePosition.x, 0, gridspacePosition.y) + floorOffset;
             Instantiate(floorPrefab, worldSpacePosition, Quaternion.identity, floorParrent.transform);
         }
-        
     }
+
+
     public void BakeNavMesh()
     {
         navMeshSurface.BuildNavMesh();
