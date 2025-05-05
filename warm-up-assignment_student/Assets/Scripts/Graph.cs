@@ -55,9 +55,20 @@ public class Graph<T>
         }
         
         Debug.Log(toPrint);
-        
-        
-        
+    }
+
+    public int Size()
+    {
+        return adjacencyList.Count;
+    }
+
+    public T ReturnByIndex(int index)
+    {
+        if (index > adjacencyList.Count)
+        {
+            Debug.Log("Node does not exist in the graph.");
+        }
+        return adjacencyList.Keys.ElementAt(index);
     }
 
 
@@ -70,7 +81,6 @@ public class Graph<T>
         discovered.Add(currentNode);
         while (fifo.Count != 0)
         {
-            Debug.Log(currentNode.ToString());
             currentNode = fifo.First();
             fifo.Remove(currentNode);
             List<T> allNeighbors = GetNeighbors(currentNode);
@@ -95,7 +105,6 @@ public class Graph<T>
         discovered.Add(currentNode);
         while (fifo.Count != 0)
         {
-            Debug.Log(currentNode.ToString());
             currentNode = fifo.Last();
             fifo.Remove(currentNode);
             List<T> allNeighbors = GetNeighbors(currentNode);
