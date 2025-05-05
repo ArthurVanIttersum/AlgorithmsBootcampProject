@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.AI.Navigation;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ public class DungeonAssetPlacer : MonoBehaviour
     public GameObject floorPrefab;
     public DungeonGenerator dungeonGenerator;
     public HashSet<Vector3> wallPositions = new HashSet<Vector3>();
+    public NavMeshSurface navMeshSurface;
     public void PlaceAssets()
     {
         //walls
@@ -74,5 +76,9 @@ public class DungeonAssetPlacer : MonoBehaviour
             Instantiate(floorPrefab, new Vector3(dungeonGenerator.doors[i].position.x, 0, dungeonGenerator.doors[i].position.y) + new Vector3(0.5f, 0, 0.5f), Quaternion.identity, floorParrent.transform);
         }
         
+    }
+    public void BakeNavMesh()
+    {
+        navMeshSurface.BuildNavMesh();
     }
 }

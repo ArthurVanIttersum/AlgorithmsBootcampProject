@@ -56,6 +56,7 @@ public class DungeonGenerator : MonoBehaviour
         print(rooms.Count + doors.Count - graph.BFS(rooms[0]));
         yield return new WaitForSeconds(cooldown);
         assetPlacer.PlaceAssets();
+        assetPlacer.BakeNavMesh();
     }
 
     void Update()
