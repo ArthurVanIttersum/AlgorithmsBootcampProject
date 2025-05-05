@@ -10,8 +10,12 @@ public class DungeonAssetPlacer : MonoBehaviour
     public GameObject EmptyGameObjectPrefab;
     public GameObject floorPrefab;
     public DungeonGenerator dungeonGenerator;
-    public HashSet<Vector3> wallPositions = new HashSet<Vector3>();
+    public HashSet<Vector2> wallPositions = new HashSet<Vector2>();
     public NavMeshSurface navMeshSurface;
+    private Vector3 wallOffset = new Vector3(0.5f, 0.5f, 0.5f);
+    private Vector3 floorOffset = new Vector3(0.5f, 0, 0.5f);
+    private Vector2 gridspacePosition;
+    private Vector3 worldSpacePosition;
     public void PlaceAssets()
     {
         //walls
@@ -22,39 +26,29 @@ public class DungeonAssetPlacer : MonoBehaviour
             RectInt room = dungeonGenerator.rooms[i];
             for (int j = 0; j < room.width; j++)
             {
-                Vector2 pos1 = room.min + new Vector2(j, 0);
-                Vector3 pos1b = new Vector3(pos1.x, 0, pos1.y) + new Vector3(0.5f, 0.5f, 0.5f);
-                wallPositions.Add(pos1b);
-
-                Vector2 pos2 = room.min + new Vector2(j, room.height - 1);
-                Vector3 pos2b = new Vector3(pos2.x, 0, pos2.y) + new Vector3(0.5f, 0.5f, 0.5f);
-                wallPositions.Add(pos2b);
-
+                wallPositions.Add(room.min + new Vector2(j, 0));
+                wallPositions.Add(room.min + new Vector2(j, room.height - 1));
             }
             for (int j = 0; j < room.height; j++)
             {
-                Vector2 pos1 = room.min + new Vector2(0, j);
-                Vector3 pos1b = new Vector3(pos1.x, 0, pos1.y) + new Vector3(0.5f, 0.5f, 0.5f);
-                wallPositions.Add(pos1b);
-
-                Vector2 pos2 = room.min + new Vector2(room.width - 1, j);
-                Vector3 pos2b = new Vector3(pos2.x, 0, pos2.y) + new Vector3(0.5f, 0.5f, 0.5f);
-                wallPositions.Add(pos2b);
-
+                wallPositions.Add(room.min + new Vector2(0, j));
+                wallPositions.Add(room.min + new Vector2(room.width - 1, j));
             }
         }
         for (int i = 0; i < dungeonGenerator.doors.Count; i++)
         {
-            wallPositions.Remove(new Vector3(dungeonGenerator.doors[i].position.x, 0, dungeonGenerator.doors[i].position.y) + new Vector3(0.5f, 0.5f, 0.5f));
+            wallPositions.Remove(dungeonGenerator.doors[i].position);
         }
         
-        Vector3[] hashData = wallPositions.ToArray();
+        Vector2[] hashData = wallPositions.ToArray();
         
 
         
         for (int i = 0; i < hashData.Length; i++)
         {
-            Instantiate(wallPrefab, hashData[i], Quaternion.identity, wallParrent.transform);
+            gridspacePosition = hashData[i];
+            worldSpacePosition = new Vector3(gridspacePosition.x, 0, gridspacePosition.y) + wallOffset;
+            Instantiate(wallPrefab, worldSpacePosition, Quaternion.identity, wallParrent.transform);
         }
 
         //floor
@@ -67,13 +61,17 @@ public class DungeonAssetPlacer : MonoBehaviour
             {
                 for (int k = 1; k < room.height - 1; k++)
                 {
-                    Instantiate(floorPrefab, new Vector3(j + room.xMin, 0, k + room.yMin) + new Vector3(0.5f, 0, 0.5f), Quaternion.identity, floorParrent.transform);
+                    gridspacePosition = new Vector2(j, k) + room.min;
+                    worldSpacePosition = new Vector3(gridspacePosition.x, 0, gridspacePosition.y) + floorOffset;
+                    Instantiate(floorPrefab, worldSpacePosition, Quaternion.identity, floorParrent.transform);
                 }
             }
         }
         for (int i = 0; i < dungeonGenerator.doors.Count; i++)
         {
-            Instantiate(floorPrefab, new Vector3(dungeonGenerator.doors[i].position.x, 0, dungeonGenerator.doors[i].position.y) + new Vector3(0.5f, 0, 0.5f), Quaternion.identity, floorParrent.transform);
+            gridspacePosition = dungeonGenerator.doors[i].position;
+            worldSpacePosition = new Vector3(gridspacePosition.x, 0, gridspacePosition.y) + floorOffset;
+            Instantiate(floorPrefab, worldSpacePosition, Quaternion.identity, floorParrent.transform);
         }
         
     }
