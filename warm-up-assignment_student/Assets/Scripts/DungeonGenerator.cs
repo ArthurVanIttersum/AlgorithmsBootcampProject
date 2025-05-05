@@ -18,6 +18,7 @@ public class DungeonGenerator : MonoBehaviour
     public bool displayDictionary;
 
     Graph<RectInt> graph = new Graph<RectInt>();
+    private int refresh = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     IEnumerator Start()
@@ -36,14 +37,17 @@ public class DungeonGenerator : MonoBehaviour
                 colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
                 colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
                 colors.Remove(colors[completedRooms]);
-                yield return new WaitForSeconds(cooldown);
+                if (Refresh())
+                {
+                    yield return new WaitForSeconds(cooldown);
+                }
             }
             else
             {
                 completedRooms++;
             }
         }
-        yield return new WaitForSeconds(cooldown);
+        //yield return new WaitForSeconds(cooldown);
         print("rooms done");
         for (int i = 0; i < rooms.Count; i++)
         {
@@ -63,7 +67,7 @@ public class DungeonGenerator : MonoBehaviour
                 }
             } 
         }
-        yield return new WaitForSeconds(cooldown);
+        //yield return new WaitForSeconds(cooldown);
         print("doors done");
         for (int i = 0; i < rooms.Count; i++)
         {
@@ -89,7 +93,8 @@ public class DungeonGenerator : MonoBehaviour
         {
             Debug.Log("all rooms are reachable");
         }
-        
+        Debug.Log(Time.time);
+        yield return new WaitForSeconds(cooldown);
     }
 
     // Update is called once per frame
@@ -212,5 +217,10 @@ public class DungeonGenerator : MonoBehaviour
         
     }
 
-
+    private bool Refresh()
+    {
+        refresh++;
+        
+        return (refresh % 1000 == 1);
+    }
 }
