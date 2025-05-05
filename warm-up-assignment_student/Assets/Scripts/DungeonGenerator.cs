@@ -23,47 +23,11 @@ public class DungeonGenerator : MonoBehaviour
     IEnumerator Start()
     {
         //start of the algorithm
-        rooms.Add(startSquare);
-        colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
-        for (int i = 0; i < steps; i++)//keep splitting rooms untill all rooms cannot be split anymore
-        {
-            if (rooms.Count <= completedRooms)
-            {
-                break;
-            }
-            if (SplitRoom(rooms[completedRooms]))
-            {
-                colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
-                colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
-                colors.Remove(colors[completedRooms]);
-                yield return new WaitForSeconds(cooldown);
-            }
-            else
-            {
-                completedRooms++;
-            }
-        }
+        GenerateRoomData();
         yield return new WaitForSeconds(cooldown);
         print("rooms done");
         //make doors
-        for (int i = 0; i < rooms.Count; i++)
-        {
-            for (int j = i; j < rooms.Count; j++)
-            {
-                if (i != j)
-                {
-                    if (AlgorithmsUtils.Intersects(rooms[i], rooms[j]))
-                    {
-                        RectInt intersectArea = AlgorithmsUtils.Intersect(rooms[i], rooms[j]);
-                        if (intersectArea.width * intersectArea.height > 2)
-                        {
-                            MakeDoor(intersectArea);
-                            yield return new WaitForSeconds(cooldown);
-                        }
-                    }
-                }
-            } 
-        }
+        GenerateDoorData();
         yield return new WaitForSeconds(cooldown);
         print("doors done");
         //add all doors to the graph
@@ -77,17 +41,7 @@ public class DungeonGenerator : MonoBehaviour
             graph.AddNode(doors[i]);
         }
         //find which doors and which rooms belong together and add this data to the graph
-        for (int i = 0; i < rooms.Count; i++)
-        {
-            for (int j = 0; j < doors.Count; j++)
-            {
-                if (AlgorithmsUtils.Intersects(rooms[i], doors[j]))
-                {
-                    graph.AddEdge(rooms[i], doors[j]);
-                    yield return new WaitForSeconds(cooldown);
-                }
-            }
-        }
+        ConnectNodes();
         yield return new WaitForSeconds(cooldown);
         
         Debug.Log("Graph Structure:");
@@ -131,6 +85,67 @@ public class DungeonGenerator : MonoBehaviour
         }
 
     }
+
+    void GenerateRoomData()
+    {
+        rooms.Add(startSquare);
+        colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
+        for (int i = 0; i < steps; i++)//keep splitting rooms untill all rooms cannot be split anymore
+        {
+            if (rooms.Count <= completedRooms)
+            {
+                break;
+            }
+            if (SplitRoom(rooms[completedRooms]))
+            {
+                colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
+                colors.Add(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f));
+                colors.Remove(colors[completedRooms]);
+            }
+            else
+            {
+                completedRooms++;
+            }
+        }
+    }
+
+    void GenerateDoorData()
+    {
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            for (int j = i; j < rooms.Count; j++)
+            {
+                if (i != j)
+                {
+                    if (AlgorithmsUtils.Intersects(rooms[i], rooms[j]))
+                    {
+                        RectInt intersectArea = AlgorithmsUtils.Intersect(rooms[i], rooms[j]);
+                        if (intersectArea.width * intersectArea.height > 2)
+                        {
+                            MakeDoor(intersectArea);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void ConnectNodes()
+    {
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            for (int j = 0; j < doors.Count; j++)
+            {
+                if (AlgorithmsUtils.Intersects(rooms[i], doors[j]))
+                {
+                    graph.AddEdge(rooms[i], doors[j]);
+                    
+                }
+            }
+        }
+    }
+
+
     bool SplitRoom(RectInt roomToSplit)
     {//controlls the splitting of the room. chooses whether to split horizontally or vertically and handles cases when the room was too small to split
         if (Random.Range(0, 2) == 0)
