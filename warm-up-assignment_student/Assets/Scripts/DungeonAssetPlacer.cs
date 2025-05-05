@@ -40,13 +40,9 @@ public class DungeonAssetPlacer : MonoBehaviour
             wallPositions.Remove(dungeonGenerator.doors[i].position);
         }
         
-        Vector2[] hashData = wallPositions.ToArray();
-        
-
-        
-        for (int i = 0; i < hashData.Length; i++)
+        foreach (var item in wallPositions)
         {
-            gridspacePosition = hashData[i];
+            gridspacePosition = item;
             worldSpacePosition = new Vector3(gridspacePosition.x, 0, gridspacePosition.y) + wallOffset;
             Instantiate(wallPrefab, worldSpacePosition, Quaternion.identity, wallParrent.transform);
         }
